@@ -11,6 +11,7 @@ public enum TypeBall
 public class Ball : MonoBehaviour
 {
     public Vector3 direction;
+    public List<int> listIdDoor;
     public float speed;
     [SerializeField] Rigidbody rb;
     [SerializeField] TypeBall typeBall;
