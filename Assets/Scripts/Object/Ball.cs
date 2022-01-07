@@ -54,12 +54,10 @@ public class Ball : MonoBehaviour
         if (!canMove) return;
         if (MapCtr.Instance.CheckWallLeft(transform.position))
         {
-            Debug.Log("Left");
             velocity = new Vector3(Mathf.Abs(velocity.x), velocity.y, velocity.z);
         }
         if (MapCtr.Instance.CheckWallRight(transform.position))
         {
-            Debug.Log("Right");
             velocity = new Vector3(-velocity.x, velocity.y, velocity.z);
 
         }

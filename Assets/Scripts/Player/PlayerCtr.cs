@@ -1,11 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
 public class PlayerCtr : SingletonMonoBehavier<PlayerCtr>
 {
-    public Text text;
-
 
     #region  rotateGun
     [Header("RotateGun")]
@@ -33,10 +30,14 @@ public class PlayerCtr : SingletonMonoBehavier<PlayerCtr>
     IEnumerator m_shoot;
 
     bool canShoot = true;
+
+    float timeDelay = 0.2f;
+    float timeShoot = 0;
+
+    int ballCount = 0;
     #endregion
     void Start()
     {
-        m_shoot = Shoot();
         m_camera = Camera.main;
 
     }
@@ -45,7 +46,9 @@ public class PlayerCtr : SingletonMonoBehavier<PlayerCtr>
         currentBall++;
         if (currentBall >= limitBall)
         {
-            canShoot = true; ;
+            canShoot = true;
+            ballCount = 0;
+
         }
     }
 
@@ -90,36 +93,22 @@ public class PlayerCtr : SingletonMonoBehavier<PlayerCtr>
     {
         if (Input.GetMouseButtonUp(0) && canShoot)
         {
+            Debug.Log("vaoooo shot");
             canShoot = false;
-            StartCoroutine(m_shoot);
 
         }
-        if (Input.GetMouseButtonUp(0))
+        if (ballCount < 6 && !canShoot)
         {
-            // var ball = Instantiate(prefabBullet, tranGun.position, Quaternion.identity);
-            // ball.SetDirection(tranGun.forward);
-            // Debug.Log("tranGun.forward " + tranGun.forward);
-            StartCoroutine(Shoot());
-        }
-    }
-
-    IEnumerator Shoot()
-    {
-        Debug.LogWarning("vao =" + limitBall);
-        int countShoot = 0;
-        // while (countShoot < limitBall)
-        // {
-        for (int i = 0; i < 5; ++i)
-        {
-            var ball = Instantiate(prefabBullet, tranGun.position, Quaternion.identity);
-            ball.SetDirection(tranGun.forward);
-            ball.SetDirectionWithSpawn(i);
+            timeShoot += Time.deltaTime;
+            if (timeShoot >= timeDelay)
+            {
+                timeShoot = 0;
+                ballCount++;
+                var ball = Instantiate(prefabBullet, tranGun.position, Quaternion.identity);
+                ball.SetDirection(tranGun.forward);
+            }
 
         }
-        yield return new WaitForSeconds(0.2f);
-
-        // }
-        // yield return null;
 
     }
 
