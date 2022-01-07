@@ -32,12 +32,10 @@ public class Push : MonoBehaviour
 
             if (col.transform.position.z <= transform.position.z)
             {
-                Debug.Log("nho hon ");
                 rb.AddForce(new Vector3(0, 0, 1000));
             }
             else
             {
-                Debug.Log("lon hon ");
             }
 
             Destroy(col.gameObject);

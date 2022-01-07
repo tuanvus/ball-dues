@@ -1,16 +1,25 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using UnityEngine.UI;
 public class PlayerCtr : SingletonMonoBehavier<PlayerCtr>
 {
+    public Text text;
+
+
     #region  rotateGun
     [Header("RotateGun")]
+    [SerializeField] float limitAngleY;
     [SerializeField] private float rotationRate = 3.0f;
-    private float m_previousX;
-    private float m_previousY;
-    private Camera m_camera;
-    private bool m_rotating = false;
+    float m_previousX;
+    float m_previousY;
+
+    float deltaX;
+    float deltaY;
+
+    Camera m_camera;
+    bool m_rotating = false;
+    bool canRotation = true;
 
     #endregion
 
@@ -59,14 +68,23 @@ public class PlayerCtr : SingletonMonoBehavier<PlayerCtr>
         // get the user touch input
         if (Input.GetMouseButton(0))
         {
-            var deltaX = 0;
-            var deltaY = (Input.mousePosition.x - m_previousX) * rotationRate;
+            deltaX = 0;
+            deltaY = (Input.mousePosition.x - m_previousX) * rotationRate;
             transform.Rotate(deltaX, deltaY, 0, Space.World);
             m_previousX = Input.mousePosition.x;
             m_previousY = Input.mousePosition.y;
+            //}
+
         }
         if (Input.GetMouseButtonUp(0))
             m_rotating = false;
+
+        if (Input.GetKey(KeyCode.Space))
+        {
+            Debug.Log("Y " + deltaY + " x " + deltaX);
+
+        }
+
     }
     void ShootHandler()
     {
@@ -76,20 +94,32 @@ public class PlayerCtr : SingletonMonoBehavier<PlayerCtr>
             StartCoroutine(m_shoot);
 
         }
+        if (Input.GetMouseButtonUp(0))
+        {
+            // var ball = Instantiate(prefabBullet, tranGun.position, Quaternion.identity);
+            // ball.SetDirection(tranGun.forward);
+            // Debug.Log("tranGun.forward " + tranGun.forward);
+            StartCoroutine(Shoot());
+        }
     }
 
     IEnumerator Shoot()
     {
         Debug.LogWarning("vao =" + limitBall);
         int countShoot = 0;
-        while (countShoot < limitBall)
+        // while (countShoot < limitBall)
+        // {
+        for (int i = 0; i < 5; ++i)
         {
-            countShoot++;
             var ball = Instantiate(prefabBullet, tranGun.position, Quaternion.identity);
             ball.SetDirection(tranGun.forward);
-            yield return new WaitForSeconds(0.2f);
+            ball.SetDirectionWithSpawn(i);
+
         }
-        yield return null;
+        yield return new WaitForSeconds(0.2f);
+
+        // }
+        // yield return null;
 
     }
 

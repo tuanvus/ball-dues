@@ -10,30 +10,38 @@ public enum TypeBall
 
 public class Ball : MonoBehaviour
 {
-    public Vector3 direction;
     public List<int> listIdDoor;
-    public float speed;
-    [SerializeField] Rigidbody rb;
     [SerializeField] TypeBall typeBall;
     [Header("Movement")]
+    float angle = 5f;
+
     bool canMove = false;
     [SerializeField, Range(0f, 100f)]
     float maxSpeed = 10f;
 
     [SerializeField, Range(0f, 100f)]
-    float maxAcceleration = 10f;
-
 
     Vector3 velocity, desiredVelocity;
-    bool desiredJump;
-    [SerializeField]
-    Rect allowedArea = new Rect(-15f, -15f, 20f, 20f);
-    [SerializeField, Range(0f, 1f)]
-    float bounciness = 1f;
-
-
     void Start()
     {
+    }
+    public void SetDirectionWithSpawn(int i)
+    {
+        if (i % 2 == 0)
+        {
+            float projectileDirXPosition = velocity.x * Mathf.Cos((i / 2 * angle * Mathf.PI) / 180) - velocity.z * Mathf.Sin((i / 2 * angle * Mathf.PI) / 180);
+            float projectileDirYPosition = velocity.x * Mathf.Sin((i / 2 * angle * Mathf.PI) / 180) + velocity.z * Mathf.Cos((i / 2 * angle * Mathf.PI) / 180);
+            Vector3 ballnew1 = new Vector3(transform.position.x, transform.position.y, transform.position.z);
+            velocity = new Vector3(projectileDirXPosition, 0.1f, projectileDirYPosition);
+        }
+        else
+        {
+            float projectileDirXPosition = velocity.x * Mathf.Cos((-(i - 1) / 2 * angle * Mathf.PI) / 180) - velocity.z * Mathf.Sin((-(i - 1) / 2 * angle * Mathf.PI) / 180);
+            float projectileDirYPosition = velocity.x * Mathf.Sin((-(i - 1) / 2 * angle * Mathf.PI) / 180) + velocity.z * Mathf.Cos((-(i - 1) / 2 * angle * Mathf.PI) / 180);
+            Vector3 ballnew1 = new Vector3(transform.position.x, transform.position.y, transform.position.z);
+            velocity = new Vector3(projectileDirXPosition, 0.1f, projectileDirYPosition);
+        }
+        canMove = true;
 
     }
     public void SetDirection(Vector3 _dir)
@@ -43,17 +51,21 @@ public class Ball : MonoBehaviour
     }
     private void FixedUpdate()
     {
-         if(!canMove ) return;
+        if (!canMove) return;
+        if (MapCtr.Instance.CheckWallLeft(transform.position))
+        {
+            Debug.Log("Left");
+            velocity = new Vector3(Mathf.Abs(velocity.x), velocity.y, velocity.z);
+        }
+        if (MapCtr.Instance.CheckWallRight(transform.position))
+        {
+            Debug.Log("Right");
+            velocity = new Vector3(-velocity.x, velocity.y, velocity.z);
+
+        }
         desiredVelocity = velocity * maxSpeed;
-        float maxSpeedChange = maxAcceleration * Time.deltaTime;
-        velocity.x =
-            Mathf.MoveTowards(velocity.x, desiredVelocity.x, maxSpeedChange);
-        velocity.z =
-            Mathf.MoveTowards(velocity.z, desiredVelocity.z, maxSpeedChange);
 
-
-        Vector3 newPosition = transform.localPosition + velocity;
-        transform.position+= velocity * Time.deltaTime;
+        transform.position += desiredVelocity * Time.deltaTime;
 
     }
     public TypeBall GetTypeBall()

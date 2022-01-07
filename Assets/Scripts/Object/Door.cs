@@ -23,7 +23,10 @@ public class Door : MonoBehaviour
         TextComponent.text = "x" + k_Plus.ToString();
     }
     
-
+     private void OnTriggerEnter(Collider col)
+     {
+         
+     }
     void CheckBullet()
     {
         //  if (!listIdDoor.Contains(door.id))
