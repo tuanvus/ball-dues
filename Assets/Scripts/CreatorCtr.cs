@@ -9,30 +9,25 @@ public class CreatorCtr : SingletonMonoBehavier<CreatorCtr>
 
     float angle = 5f;
 
-    public void CreatorBallHell(int count,int id)
+    public Ball CreatorBallHell(Vector3 pos, int i, int id)
     {
-        for (int i = 1; i < count + 1; i++)
-            if (i % 2 == 0)
-            {
-                float projectileDirXPosition = velocity.x * Mathf.Cos((i / 2 * angle * Mathf.PI) / 180) - velocity.z * Mathf.Sin((i / 2 * angle * Mathf.PI) / 180);
-                float projectileDirYPosition = velocity.x * Mathf.Sin((i / 2 * angle * Mathf.PI) / 180) + velocity.z * Mathf.Cos((i / 2 * angle * Mathf.PI) / 180);
 
-                Vector3 ballnew1 = new Vector3(transform.position.x, transform.position.y, transform.position.z);
-                var ballnew = Instantiate(ball, ballnew1, Quaternion.identity);
-                ballnew.SetDirection( new Vector3(projectileDirXPosition, 0.1f, projectileDirYPosition));
-                ballnew.listIdDoor.Add(id);
+        var ballnew = PoolingObject.GetObjectFree(ball);
+        ballnew.transform.position = pos;
+        ballnew.SetDirectionWithSpawn(i);
+        ballnew.listIdDoor.Add(id);
+        ballnew.transform.SetParent(transform);
+        return ballnew;
 
-            }
-            else
-            {
-                float projectileDirXPosition = velocity.x * Mathf.Cos((-(i - 1) / 2 * angle * Mathf.PI) / 180) - velocity.z * Mathf.Sin((-(i - 1) / 2 * angle * Mathf.PI) / 180);
-                float projectileDirYPosition = velocity.x * Mathf.Sin((-(i - 1) / 2 * angle * Mathf.PI) / 180) + velocity.z * Mathf.Cos((-(i - 1) / 2 * angle * Mathf.PI) / 180);
+    }
+    public Ball CreatorBall(Vector3 pos)
+    {
 
-                Vector3 ballnew1 = new Vector3(transform.position.x, transform.position.y, transform.position.z);
-                var ballnew = Instantiate(ball, ballnew1, Quaternion.identity);
-                ballnew.SetDirection(new Vector3(projectileDirXPosition, 0.1f, projectileDirYPosition));
-                ballnew.listIdDoor.Add(id);
-     
-            }
+        var ballnew = PoolingObject.GetObjectFree(ball);
+        ballnew.transform.position = pos;
+
+        ballnew.SetDirection(pos);
+        ballnew.transform.SetParent(transform);
+        return ballnew;
     }
 }

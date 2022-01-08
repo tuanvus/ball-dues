@@ -9,6 +9,7 @@ public class Door : MonoBehaviour
     public TextMeshPro TextComponent;
     public int id;
     public int k_Plus;
+    bool check = false;
     private void Start()
     {
 
@@ -22,44 +23,52 @@ public class Door : MonoBehaviour
         GetComponent<MeshRenderer>().material.color = listC[k_Plus - 1];
         TextComponent.text = "x" + k_Plus.ToString();
     }
-    
-     private void OnTriggerEnter(Collider col)
-     {
-         
-     }
+
+    private void Update()
+    {
+        CheckBullet();
+    }
     void CheckBullet()
     {
-        //  if (!listIdDoor.Contains(door.id))
-        //     {
-        //         listIdDoor.Add(door.id);
-        //         for (int i = 1; i < door.k_Plus + 1; i++)
-
-        //             if (i % 2 == 0)
-        //             {
-        //                 float projectileDirXPosition = velocity.x * Mathf.Cos((i / 2 * angle * Mathf.PI) / 180) - velocity.z * Mathf.Sin((i / 2 * angle * Mathf.PI) / 180);
-        //                 float projectileDirYPosition = velocity.x * Mathf.Sin((i / 2 * angle * Mathf.PI) / 180) + velocity.z * Mathf.Cos((i / 2 * angle * Mathf.PI) / 180);
-        //                 Vector3 ballnew1 = new Vector3(transform.position.x, transform.position.y, transform.position.z);
-        //                 var ballnew = Instantiate(projectileBot, ballnew1, Quaternion.identity);
-        //                 ballnew.velocity = new Vector3(projectileDirXPosition, 0.1f, projectileDirYPosition);
-
-        //                 projectileBot.listIdDoor.Add(id);
+        if (check) return;
+        StartCoroutine(Check());
+        if (!check) check = true;
 
 
-        //             }
-        //             else
-        //             {
-        //                 float projectileDirXPosition = velocity.x * Mathf.Cos((-(i - 1) / 2 * angle * Mathf.PI) / 180) - velocity.z * Mathf.Sin((-(i - 1) / 2 * angle * Mathf.PI) / 180);
-        //                 float projectileDirYPosition = velocity.x * Mathf.Sin((-(i - 1) / 2 * angle * Mathf.PI) / 180) + velocity.z * Mathf.Cos((-(i - 1) / 2 * angle * Mathf.PI) / 180);
-        //                 Vector3 ballnew1 = new Vector3(transform.position.x, transform.position.y, transform.position.z);
-        //                 var ballnew = Instantiate(projectileBot, ballnew1, Quaternion.identity);
-        //                 ballnew.velocity = new Vector3(projectileDirXPosition, 0.1f, projectileDirYPosition);
-
-        //                 projectileBot.listIdDoor.Add(id);
+    }
+    IEnumerator Check()
+    {
+        while (true)
+        {
+            foreach (Transform item in CreatorCtr.Instance.transform)
+            {
 
 
-        //             }
+                //if (!item.gameObject.active) continue;
+                float dist = Vector3.Distance(transform.position, item.position);
+                Debug.LogError("dist =" + dist);
+                if (dist < 5.1f)
+                {
+                    for (int i = 0; i < 3; i++)
+                    {
+                        Debug.Log("vaoooo");
 
-        //     }
+                        CreatorCtr.Instance.CreatorBallHell(transform.position, i, i);
+
+                        if (i == 2)
+                        {
+                            StopCoroutine(Check());
+
+                        }
+                    }
+
+                }
+
+            }
+            yield return new WaitForSeconds(0.1f);
+
+        }
+
     }
 
 }

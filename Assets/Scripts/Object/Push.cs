@@ -38,7 +38,7 @@ public class Push : MonoBehaviour
             {
             }
 
-            Destroy(col.gameObject);
+            col.gameObject.SetActive(false);
 
 
         }

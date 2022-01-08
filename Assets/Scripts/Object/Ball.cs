@@ -61,6 +61,10 @@ public class Ball : MonoBehaviour
             velocity = new Vector3(-velocity.x, velocity.y, velocity.z);
 
         }
+        if (MapCtr.Instance.CheckDistanceDoor(transform.position))
+        {
+        }
+
         desiredVelocity = velocity * maxSpeed;
 
         transform.position += desiredVelocity * Time.deltaTime;

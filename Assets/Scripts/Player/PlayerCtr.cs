@@ -10,7 +10,7 @@ public class PlayerCtr : SingletonMonoBehavier<PlayerCtr>
     [SerializeField] private float rotationRate = 3.0f;
     float m_previousX;
     float m_previousY;
-
+    float AngleOrigin = -120;
     float deltaX;
     float deltaY;
 
@@ -39,7 +39,7 @@ public class PlayerCtr : SingletonMonoBehavier<PlayerCtr>
     void Start()
     {
         m_camera = Camera.main;
-
+        AngleOrigin = transform.eulerAngles.y;
     }
     public void SetCurrentBall()
     {
@@ -65,7 +65,6 @@ public class PlayerCtr : SingletonMonoBehavier<PlayerCtr>
         if (Input.GetMouseButtonDown(0))
         {
             m_rotating = true;
-            m_previousX = Input.mousePosition.x;
             m_previousY = Input.mousePosition.y;
         }
         // get the user touch input
@@ -73,10 +72,24 @@ public class PlayerCtr : SingletonMonoBehavier<PlayerCtr>
         {
             deltaX = 0;
             deltaY = (Input.mousePosition.x - m_previousX) * rotationRate;
-            transform.Rotate(deltaX, deltaY, 0, Space.World);
+            var v3 = new Vector3(0, AngleOrigin + deltaY, 0);
+
+            // transform.Rotate(deltaX, deltaY, 0, Space.World);
+            //}
+            if (v3.y < -55)
+            {
+                v3.y = -55;
+            }
+            else if (v3.y > 55)
+            {
+                v3.y = 55;
+
+            }
+
+            AngleOrigin = v3.y;
+            transform.eulerAngles = v3;
             m_previousX = Input.mousePosition.x;
             m_previousY = Input.mousePosition.y;
-            //}
 
         }
         if (Input.GetMouseButtonUp(0))
@@ -97,14 +110,14 @@ public class PlayerCtr : SingletonMonoBehavier<PlayerCtr>
             canShoot = false;
 
         }
-        if (ballCount < 6 && !canShoot)
+        if (ballCount < limitBall && !canShoot)
         {
             timeShoot += Time.deltaTime;
             if (timeShoot >= timeDelay)
             {
                 timeShoot = 0;
                 ballCount++;
-                var ball = Instantiate(prefabBullet, tranGun.position, Quaternion.identity);
+                var ball = CreatorCtr.Instance.CreatorBall(tranGun.position);
                 ball.SetDirection(tranGun.forward);
             }
 
