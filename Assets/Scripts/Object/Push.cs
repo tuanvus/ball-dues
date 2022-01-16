@@ -8,7 +8,8 @@ public class Push : MonoBehaviour
 
     public Rigidbody rb;
 
-    float speedMove = 5;
+   private float _speedMove = 5;
+
 
     void Start()
     {
@@ -18,14 +19,13 @@ public class Push : MonoBehaviour
 
     }
 
-    bool isFirstTime;
 
     private void OnTriggerEnter(Collider col)
     {
         if (col.gameObject.tag == "Ball")
         {
             var ball = col.GetComponent<Ball>();
-            if (ball.GetTypeBall() == TypeBall.player)
+            if (ball.GetTypeBall() == NodeBall.PLAYER)
             {
                 PlayerCtr.Instance.SetCurrentBall();
             }

@@ -91,7 +91,7 @@ SphereCollider:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2399336768335583336}
   m_Material: {fileID: 13400000, guid: fffff1ac837d83f4cb6897c760e09995, type: 2}
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
   m_Radius: 0.5
@@ -108,8 +108,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c3d7b9de69c16714998152ead26978c8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  listIdDoor: 
-  typeBall: 0
-  maxSpeed: 21
-  velocity: {x: 0, y: 0, z: 0}
-  desiredVelocity: {x: 0, y: 0, z: 0}
+  _NodeBall: 0
+  doorList: 
+  _maxSpeed: 18

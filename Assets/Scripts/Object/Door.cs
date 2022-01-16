@@ -2,73 +2,68 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
-public class Door : MonoBehaviour
-{
 
-    public List<Color> listC;
-    public TextMeshPro TextComponent;
+public class Door : MonoBehaviour, ICollision
+{
+    private const float MAX_DISTANCE = 5F;
+
+    public List<Color> colorDoorList;
+    public TextMeshPro textIDDoor;
     public int id;
-    public int k_Plus;
-    bool check = false;
+
+
+    [SerializeField] private LayerMask _TargetLayerMask;
+    private bool _isBall = false;
+    private bool _hitDetect;
+    private RaycastHit _Hit;
+    private Collider[] _hitColliders;
+
+    private Ball _ball;
+
     private void Start()
     {
-
-        //id.Clear();
-        TextComponent = GetComponent<TextMeshPro>();
-    }
-    public void initc(int id)
-    {
-        this.id = id;
-        k_Plus = Random.RandomRange(2, 5);
-        GetComponent<MeshRenderer>().material.color = listC[k_Plus - 1];
-        TextComponent.text = "x" + k_Plus.ToString();
+        //textIDDoor = GetComponent<TextMeshPro>();
     }
 
     private void Update()
     {
-        CheckBullet();
+        CheckDistanceBall();
     }
-    void CheckBullet()
-    {
-        if (check) return;
-        StartCoroutine(Check());
-        if (!check) check = true;
 
-
-    }
-    IEnumerator Check()
+    void CheckDistanceBall()
     {
-        while (true)
+        _hitDetect = Physics.BoxCast(transform.position, Vector3.one,
+            transform.forward, out _Hit, transform.rotation, MAX_DISTANCE);
+
+        if (_hitDetect)
         {
-            foreach (Transform item in CreatorCtr.Instance.transform)
-            {
-
-
-                //if (!item.gameObject.active) continue;
-                float dist = Vector3.Distance(transform.position, item.position);
-                Debug.LogError("dist =" + dist);
-                if (dist < 5.1f)
-                {
-                    for (int i = 0; i < 3; i++)
-                    {
-                        Debug.Log("vaoooo");
-
-                        CreatorCtr.Instance.CreatorBallHell(transform.position, i, i);
-
-                        if (i == 2)
-                        {
-                            StopCoroutine(Check());
-
-                        }
-                    }
-
-                }
-
-            }
-            yield return new WaitForSeconds(0.1f);
-
+            //Output the name of the Collider your Box hit
+            Debug.Log("Hit : " + _Hit.collider.name);
+            _hitColliders = Physics.OverlapBox(transform.position, Vector3.one * MAX_DISTANCE, Quaternion.identity,
+                _TargetLayerMask);
+            HandObject();
         }
-
     }
 
+//    void HandObject()
+//    {
+//    
+//    }
+
+    public void HandObject()
+    {
+        Debug.Log("ko vao " + _hitColliders.Length);
+        for (int i = 0; i < _hitColliders.Length; i++)
+        {
+            _ball = _hitColliders[i].GetComponent<Ball>();
+            if (!_ball.HasCollisionDoor(id))
+            {
+                Debug.Log("log v =" + _ball.GetVelocity());
+                _ball.AddID_Door(id);
+                var newball = CreatorCtr.Instance.CreatorBallHell(_ball.transform.position, i, id);
+
+                // newball.SetDirection(ball.transform.forward);
+            }
+        }
+    }
 }

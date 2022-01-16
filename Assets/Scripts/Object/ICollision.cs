@@ -1,0 +1,4 @@
+interface ICollision
+{
+    void HandObject();
+}

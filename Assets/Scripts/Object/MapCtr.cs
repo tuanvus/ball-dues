@@ -5,10 +5,10 @@ using UnityEngine;
 public class MapCtr : SingletonMonoBehavier<MapCtr>
 {
 
-    [SerializeField] Transform door;
+    [SerializeField] Transform doorTF;
 
-    [SerializeField] Transform wallLeft;
-    [SerializeField] Transform wallRight;
+    [SerializeField] Transform wallLeftTF;
+    [SerializeField] Transform wallRightTF;
 
 
     void Start()
@@ -17,16 +17,16 @@ public class MapCtr : SingletonMonoBehavier<MapCtr>
     }
     public bool CheckWallLeft(Vector3 pos)
     {
-        return pos.x <= wallLeft.position.x + 0.5f;
+        return pos.x <= wallLeftTF.position.x + 0.5f;
     }
     public bool CheckWallRight(Vector3 pos)
     {
-        return pos.x >= wallRight.position.x - 0.5f;
+        return pos.x >= wallRightTF.position.x - 0.5f;
     }
 
     public bool CheckDistanceDoor(Vector3 pos)
     {
-        foreach (Transform item in door)
+        foreach (Transform item in doorTF)
         {
             if (!item.gameObject.active) continue;
             float dist = Vector3.Distance(pos, item.position);

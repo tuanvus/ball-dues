@@ -1,78 +1,100 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 
-public enum TypeBall
+public enum NodeBall
 {
-    player, enemy
+    PLAYER,
+    ENEMY
 }
 
 public class Ball : MonoBehaviour
 {
-    public List<int> listIdDoor;
-    [SerializeField] TypeBall typeBall;
-    [Header("Movement")]
-    float angle = 5f;
+    [SerializeField] NodeBall _NodeBall;
 
-    bool canMove = false;
-    [SerializeField, Range(0f, 100f)]
-    float maxSpeed = 10f;
+    public List<int> doorList = new List<int>();
 
-    [SerializeField, Range(0f, 100f)]
+    [Header("Movement")] private float _angle = 1f;
+    [SerializeField, Range(0f, 100f)] private float _maxSpeed = 10f;
+    private bool _canMove = false;
 
-    Vector3 velocity, desiredVelocity;
-    void Start()
-    {
-    }
-    public void SetDirectionWithSpawn(int i)
-    {
-        if (i % 2 == 0)
-        {
-            float projectileDirXPosition = velocity.x * Mathf.Cos((i / 2 * angle * Mathf.PI) / 180) - velocity.z * Mathf.Sin((i / 2 * angle * Mathf.PI) / 180);
-            float projectileDirYPosition = velocity.x * Mathf.Sin((i / 2 * angle * Mathf.PI) / 180) + velocity.z * Mathf.Cos((i / 2 * angle * Mathf.PI) / 180);
-            Vector3 ballnew1 = new Vector3(transform.position.x, transform.position.y, transform.position.z);
-            velocity = new Vector3(projectileDirXPosition, 0.1f, projectileDirYPosition);
-        }
-        else
-        {
-            float projectileDirXPosition = velocity.x * Mathf.Cos((-(i - 1) / 2 * angle * Mathf.PI) / 180) - velocity.z * Mathf.Sin((-(i - 1) / 2 * angle * Mathf.PI) / 180);
-            float projectileDirYPosition = velocity.x * Mathf.Sin((-(i - 1) / 2 * angle * Mathf.PI) / 180) + velocity.z * Mathf.Cos((-(i - 1) / 2 * angle * Mathf.PI) / 180);
-            Vector3 ballnew1 = new Vector3(transform.position.x, transform.position.y, transform.position.z);
-            velocity = new Vector3(projectileDirXPosition, 0.1f, projectileDirYPosition);
-        }
-        canMove = true;
 
-    }
-    public void SetDirection(Vector3 _dir)
-    {
-        velocity = _dir;
-        canMove = true;
-    }
+    private Vector3 _velocity;
+    private Vector3 _desiredVelocity;
+
+
     private void FixedUpdate()
     {
-        if (!canMove) return;
+        if (!_canMove) return;
         if (MapCtr.Instance.CheckWallLeft(transform.position))
         {
-            velocity = new Vector3(Mathf.Abs(velocity.x), velocity.y, velocity.z);
+            _velocity = new Vector3(Mathf.Abs(_velocity.x), _velocity.y, _velocity.z);
         }
+
         if (MapCtr.Instance.CheckWallRight(transform.position))
         {
-            velocity = new Vector3(-velocity.x, velocity.y, velocity.z);
-
+            _velocity = new Vector3(-_velocity.x, _velocity.y, _velocity.z);
         }
+
         if (MapCtr.Instance.CheckDistanceDoor(transform.position))
         {
         }
 
-        desiredVelocity = velocity * maxSpeed;
+        _desiredVelocity = _velocity * _maxSpeed;
 
-        transform.position += desiredVelocity * Time.deltaTime;
-
+        transform.position += _desiredVelocity * Time.deltaTime;
     }
-    public TypeBall GetTypeBall()
+
+    public bool HasCollisionDoor(int idDoor)
     {
-        return typeBall;
+        return doorList.Contains(idDoor);
     }
 
+    public void AddID_Door(int id)
+    {
+        doorList.Add(id);
+    }
+
+    public Vector3 GetVelocity()
+    {
+        return _velocity;
+    }
+
+    public void SetDirectionWithSpawn(int i)
+    {
+        Debug.Log("_velocity  x="+_velocity.x + " x "+Mathf.Sin((_angle * Mathf.PI) / 180f));
+        Debug.Log("_velocity z="+_velocity.z + " z "+Mathf.Cos(((_angle/2) * Mathf.PI) / 180f));
+        if (i % 2 == 0)
+        {
+            float angleX = _velocity.x + Mathf.Sin((_angle * Mathf.PI) / 180f);
+            float angleZ = _velocity.z + Mathf.Cos((_angle * Mathf.PI) / 180f);
+            Vector3 ve = ( transform.position).normalized;
+            _velocity = ve;
+
+        }
+        else
+        {
+           
+
+            float angleX = _velocity.x - Mathf.Sin(((_angle/2) * Mathf.PI) / 180f);
+            float angleZ = _velocity.z - Mathf.Cos(((_angle/2) * Mathf.PI) / 180f);
+            Vector3 ve = ( transform.position).normalized;
+            _velocity = ve;
+
+        }
+        _canMove = true;
+    }
+
+    public void SetDirection(Vector3 _dir)
+    {
+        _velocity = _dir;
+        _canMove = true;
+    }
+
+    public NodeBall GetTypeBall()
+    {
+        return _NodeBall;
+    }
 }

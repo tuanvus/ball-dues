@@ -13,9 +13,9 @@ public class CreatorCtr : SingletonMonoBehavier<CreatorCtr>
     {
 
         var ballnew = PoolingObject.GetObjectFree(ball);
+        ballnew.AddID_Door(id);
         ballnew.transform.position = pos;
         ballnew.SetDirectionWithSpawn(i);
-        ballnew.listIdDoor.Add(id);
         ballnew.transform.SetParent(transform);
         return ballnew;
 
